@@ -1,8 +1,5 @@
 /**
  * CKArmory Plugin, (c) 2019 by Martin aka Mireyu
-
- # V. 1.0 - 2019-02-25
- Erste stabile Version mit Item-Suche.
  */
 
 // pluginregister im editor
@@ -28,19 +25,19 @@ CKEDITOR.plugins.add( "ckarmory", {
 			{
 				label: "Items yay",
 				command: dialogItems,
-				toolbar: pluginName
+				toolbar: pluginName,
+				icon: pluginName
 			}
 		);
 
 		// eigene elemente erlauben, css zwecks iframe
 		editor.filter.allow("span(!ckarmory)[data-*,title,contenteditable]{background-image}", "ckarmory");
-		editor.addContentsCss("ckarmory.css");
+		editor.addContentsCss(this.path + "ckarmory.css");
 	},
 
 	onLoad: function() {
 		// globales css zwecks dialog
-		CKEDITOR.document.appendStyleSheet("ckarmory.css");
-		//CKEDITOR.dtd.$removeEmpty.span = false;
+		CKEDITOR.document.appendStyleSheet(this.path + "ckarmory.css");
 	}
 
 });

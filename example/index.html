@@ -8,7 +8,7 @@
 	<textarea id="editor">Random Platzhalter Text</textarea>
 	<script>
 	// plugin laden
-	CKEDITOR.plugins.addExternal( "ckarmory", window.location.pathname.slice(0,-10), "plugin.js" );
+	CKEDITOR.plugins.addExternal( "ckarmory",  window.location.pathname.slice(0,-10) + "../" , "plugin.js" );
 
 	CKEDITOR.replace( "editor", {
 			// das plugin aktivieren
