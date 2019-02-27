@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="https://cdn.ckeditor.com/4.11.2/standard/ckeditor.js"></script>
+	<title>CKArmory Test</title>
+</head>
+<body>
+	<textarea id="editor">Random Platzhalter Text</textarea>
+	<script>
+	// plugin laden
+	CKEDITOR.plugins.addExternal( "ckarmory", window.location.pathname.slice(0,-10), "plugin.js" );
+
+	CKEDITOR.replace( "editor", {
+			// das plugin aktivieren
+			extraPlugins: "ckarmory",
+
+			// eine kleine feine toolbar
+			toolbarGroups: [
+				{ name: "test", groups: [ "undo" ] },
+				{ name: "basicstyles", groups: [ "basicstyles", "cleanup" ] },
+				{ name: "paragraph",   groups: [ "list" ] },
+				{ name: "links" },
+				{ name: "document",	   groups: [ "mode" ] },
+				{ name: "ckarmory", groups: [ "ckarmory" ] }
+			]
+		} );
+	</script>
+</body>
+</html>
