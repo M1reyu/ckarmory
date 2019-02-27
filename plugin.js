@@ -14,20 +14,20 @@ CKEDITOR.plugins.add( "ckarmory", {
 
 		// namensdeklaration
 		var pluginName = "ckarmory";
-		var dialogName = pluginName + "Dialog";
+		var dialogItems = pluginName + "Items";
 
 		// dialog laden
-		CKEDITOR.dialog.add(dialogName, this.path + "dialogs/" + dialogName + ".js");
+		CKEDITOR.dialog.add(dialogItems, this.path + "dialogs/" + pluginName + ".js");
 
 		// befehl fuer dialog (da kein widget)
-		editor.addCommand(dialogName, new CKEDITOR.dialogCommand( dialogName ));
+		editor.addCommand(dialogItems, new CKEDITOR.dialogCommand( dialogItems ));
 
 		// btn zur toolbar hinzufuegen
 		editor.ui.addButton(
 			"Ckarmory",
 			{
 				label: "Items yay",
-				command: dialogName,
+				command: dialogItems,
 				toolbar: pluginName
 			}
 		);

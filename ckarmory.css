@@ -1,7 +1,7 @@
 /**
  * CKArmory Plugin CSS, (c) 2019 by Martin aka Mireyu
  */
-#search_results {
+.search_results {
 	max-height: 200px;
 	overflow-x: hidden;
 	overflow-y: scroll;
@@ -45,25 +45,25 @@
 	pointer-events: none;
 }
 
-.rarity_2 {
+.rarity_2, .rarity_basic {
 	box-shadow: inset 0 0 0 2px #000;
 }
-.rarity_3 {
+.rarity_3, .rarity_fine {
 	box-shadow: inset 0 0 0 2px #62A4DA;
 }
-.rarity_4 {
+.rarity_4, .rarity_masterwork {
 	box-shadow: inset 0 0 0 2px #1a9306;
 }
-.rarity_5 {
+.rarity_5, .rarity_rare {
 	box-shadow: inset 0 0 0 2px #fcd00b;
 }
-.rarity_6 {
+.rarity_6, .rarity_exotic {
 	box-shadow: inset 0 0 0 2px #ffa405;
 }
-.rarity_7 {
+.rarity_7, .rarity_ascended {
 	box-shadow: inset 0 0 0 2px #fb3e8d;
 }
-.rarity_8 {
+.rarity_8, .rarity_legendary {
 	box-shadow: inset 0 0 0 2px #4C139D;
 }
 
