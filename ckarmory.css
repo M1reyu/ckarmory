@@ -1,0 +1,79 @@
+/**
+ * CKArmory Plugin CSS, (c) 2019 by Martin aka Mireyu
+ */
+#search_results {
+	max-height: 200px;
+	overflow-x: hidden;
+	overflow-y: scroll;
+}
+
+.result_item {
+	/*background-color: rgba(0,0,0,.1);*/
+	box-shadow: inset 0 0 0 2px #AAA;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	margin-bottom: 4px;
+	cursor: pointer;
+}
+
+.result_item:hover {
+	background-color: rgba(0,0,0,.3);
+}
+
+.result_item.active {
+	background-color: rgba(0,100,0,.3);
+}
+
+.result_item * {
+	cursor: pointer;
+}
+
+.result_img {
+	flex: 0 0 40px;
+	pointer-events: none;
+}
+
+.result_img img {
+	display: block;
+	max-width: 100%;
+}
+
+.result_name {
+	flex: 1 0 40px;
+	padding: 4px 15px;
+	pointer-events: none;
+}
+
+.rarity_2 {
+	box-shadow: inset 0 0 0 2px #000;
+}
+.rarity_3 {
+	box-shadow: inset 0 0 0 2px #62A4DA;
+}
+.rarity_4 {
+	box-shadow: inset 0 0 0 2px #1a9306;
+}
+.rarity_5 {
+	box-shadow: inset 0 0 0 2px #fcd00b;
+}
+.rarity_6 {
+	box-shadow: inset 0 0 0 2px #ffa405;
+}
+.rarity_7 {
+	box-shadow: inset 0 0 0 2px #fb3e8d;
+}
+.rarity_8 {
+	box-shadow: inset 0 0 0 2px #4C139D;
+}
+
+.ckarmory {
+	width: 30px;
+	height: 30px;
+	display: inline-block;
+	vertical-align: bottom;
+	position: relative;
+	background-color: #CCC;
+	background-position: center;
+	background-size: contain;
+}
