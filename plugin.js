@@ -12,21 +12,33 @@ CKEDITOR.plugins.add( "ckarmory", {
 		// namensdeklaration
 		var pluginName = "ckarmory";
 		var dialogItems = pluginName + "Items";
+		var dialogSkills = pluginName + "Skills";
 
 		// dialog laden
 		CKEDITOR.dialog.add(dialogItems, this.path + "dialogs/" + pluginName + ".js");
+		CKEDITOR.dialog.add(dialogSkills, this.path + "dialogs/" + pluginName + ".js");
 
 		// befehl fuer dialog (da kein widget)
 		editor.addCommand(dialogItems, new CKEDITOR.dialogCommand( dialogItems ));
+		editor.addCommand(dialogSkills, new CKEDITOR.dialogCommand( dialogSkills ));
 
 		// btn zur toolbar hinzufuegen
 		editor.ui.addButton(
-			"Ckarmory",
+			"Ckarmoryitems",
 			{
-				label: "Items yay",
+				label: "Item hinzuf&uuml;gen",
 				command: dialogItems,
 				toolbar: pluginName,
-				icon: pluginName
+				icon: this.path + "icons/" + dialogItems.toLowerCase() + ".png"
+			}
+		);
+		editor.ui.addButton(
+			"CkarmorySkills",
+			{
+				label: "Skill hinzuf&uuml;gen",
+				command: dialogSkills,
+				toolbar: pluginName,
+				icon: this.path + "icons/" + dialogSkills.toLowerCase() + ".png"
 			}
 		);
 

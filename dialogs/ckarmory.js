@@ -254,10 +254,10 @@ function getCKArmoryTab(idSuffix, tabTitle, inputTitle, elResults, validateFunc,
 CKEDITOR.dialog.add( "ckarmoryItems", function( editor ) {
 	var dialogDef = getDefaultCKArmoryDD(editor, "items");
 	dialogDef.title = "Itemauswahl";
-	var elResults1 = CKEDITOR.dom.element.createFromHtml(
+	var elResultsName = CKEDITOR.dom.element.createFromHtml(
 		"<div id='sr_items_name' class='search_results'>Gib min. 3 Zeichen ein!</div>"
 	);
-	var elResults2 = CKEDITOR.dom.element.createFromHtml(
+	var elResultsID = CKEDITOR.dom.element.createFromHtml(
 		"<div id='sr_items_it' class='search_results'>Gib min. 4 Zahlen ein!</div>"
 	);
 	dialogDef.contents = [
@@ -265,7 +265,7 @@ CKEDITOR.dialog.add( "ckarmoryItems", function( editor ) {
 			"items_name",
 			"Itemname",
 			"Gib einen Itemnamen ein (in Englisch)",
-			elResults1,
+			elResultsName,
 			ckaValidateName,
 			searchItemModified
 		),
@@ -273,13 +273,33 @@ CKEDITOR.dialog.add( "ckarmoryItems", function( editor ) {
 			"items_id",
 			"Chatlink",
 			"Gib die Item-ID ein (Chatlink)",
-			elResults2,
+			elResultsID,
 			ckaValidateID,
 			searchID
 		)
 	];
 
 	return dialogDef;
-});//ckarmoryItem add
+});//ckarmoryItems add
+
+CKEDITOR.dialog.add( "ckarmorySkills", function( editor ) {
+	var dialogDef = getDefaultCKArmoryDD(editor, "skills");
+	dialogDef.title = "Skillauswahl";
+	var elResultsID = CKEDITOR.dom.element.createFromHtml(
+		"<div id='sr_items_it' class='search_results'>Gib min. 4 Zahlen ein!</div>"
+	);
+	dialogDef.contents = [
+		getCKArmoryTab(
+			"skills_id",
+			"Chatlink",
+			"Gib die Skill-ID ein (Chatlink)",
+			elResultsID,
+			ckaValidateID,
+			searchID
+		)
+	];
+
+	return dialogDef;
+});//ckarmoryItems add
 
 
