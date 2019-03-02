@@ -1,6 +1,27 @@
-/**
- * CKArmory Plugin - Dialog, (c) 2019 by Martin aka Mireyu
- */
+/*
+CKArmory Plugin - Dialoge
+(c) 2019 by Martin aka Mireyu
+*/
+
+
+/* ########## HELPER ########## */
+
+function logme(str) {
+	var debug = true;
+	if (debug && window.console) {
+		console.log(str);
+	}
+}//logme
+
+// string-sanatizer fuer attributstrings
+function sanatizeString(str) {
+	return str.replace(/\'/g, "&#39;").replace(/\"/g, "&#34;");
+}//sanatizeString
+
+/* ########## /HELPER ########## */
+
+
+/* ########## DIALOG-GENERAL ########## */
 
 function getDefaultCKArmoryDD(editor, intention) {
 	return {
@@ -48,192 +69,7 @@ function getDefaultCKArmoryDD(editor, intention) {
 
 		} //onOK
 	};
-}
-
-function logme(str) {
-	var debug = true;
-	if (debug && window.console) {
-		console.log(str);
-	}
-}//logme
-
-// fuers visuelle, entfernt selection bei gefundenen eintraegen
-function removeSelection() {
-	var resultItems = Array.from(document.querySelectorAll(".result_item"));
-	resultItems.forEach(function(item) {
-		item.classList.remove("active");
-	});
-}//removeSelection
-
-// string-sanatizer fuer attributstrings
-function sanatizeString(str) {
-	return str.replace(/\'/g, "&#39;").replace(/\"/g, "&#34;");
-}//sanatizeString
-
-function ckaValidateName(input) {
-	var val = input.getValue().trim();
-	// jedes item hat mindestens 3 zeichen, erst dann suche starten
-	var isValid = val && val.length > 2;
-	if ( !isValid ) {
-		return ckaShowError("Gib mindestens 3 Zeichen ein!", input);
-	}
-
-	return isValid;
-}//ckaValidateName
-
-function ckaValidateID(input) {
-	var val = input.getValue().trim();
-	// ids besitzen mindestens 4 zeichen, nur numerisch
-	var isValid = val && val.length > 3;
-	if ( !isValid ) {
-		return ckaShowError("Gib mindestens 4 Zahlen ein!", input);
-	}
-
-	isValid = isValid && Number(val) === parseInt(val, 10);
-	if ( !isValid ) {
-		return ckaShowError("Ein Chatlink besitzt nur Zahlen (0-9)!", input);
-	}
-
-	return isValid;
-}//ckaValidateID
-
-function ckaShowError(msg, input) {
-	var elResults = input.elResults;
-	elResults.setHtml(
-		"<div class='cka_err'>" + msg + "</div>"
-	);
-
-	return false;
-}//ckaShowError
-
-// eigentliche logik, xhr fuer div. elemente mit ergebnisdarstellung im dialog
-function searchID(input) {
-	var val = input.getValue().trim();
-	var dialog = input.getDialog();
-	var elResults = input.elResults;
-	var intention = dialog.parts.ckarmory.intention;
-
-	// spinner hinzu
-	elResults.addClass("ckaspin");
-
-	// TODO: error handling
-	// TODO: caching
-
-	logme("suche...");
-
-	var xhr = new XMLHttpRequest();
-	xhr.onload = function(e) {
-		// load-handler - nach DONE
-		logme(e);
-		logme(e.target.response);
-
-		var data = e.target.response;
-		var content = "";
-		if (!data.text) {
-			// items gefunden
-			var item = data;
-			content = "<div class='result_item" +
-				(item.rarity ? " rarity_" + item.rarity.toLowerCase() : "") + "' " +
-				"data-id='" + item.id + "' " +
-				"data-name='" + sanatizeString(item.name) + "' " +
-				"data-img='" + item.icon + "'>" +
-				"<div class='result_img'>" +
-				"<img src='" + item.icon + "' />" +
-				"</div>" +
-				"<div class='result_name'>" + item.name + "</div>" +
-				"</div>";
-		}
-
-		// resultate (oder error) ausgeben
-		if (content) {
-			elResults.setHtml(content);
-		} else {
-			ckaShowError("Kein Ergebnis mit der ID '" + val + "' gefunden", input);
-		}
-		elResults.removeClass("ckaspin");	// spinner entfernen
-		dialog.layout();	// zentrierten
-
-	};
-	xhr.ontimeout = function(e) {
-		// XMLHttpRequest timed out
-		ckaShowError(
-			"Netzwerk Timeout - die GW2-API ist derzeit nicht erreichbar.<br/>" +
-			"Probiere es etwas später erneut.",
-			input
-		);
-	};
-
-	xhr.timeout = 20000;	// ms
-	// gw2armory bietet nur eine anzeige an, dank gw2spidy gibts ne elegante suche
-	xhr.open("GET", "https://api.guildwars2.com/v2/" + intention + "?lang=de&id=" + val, true);
-	xhr.responseType = "json";
-	xhr.send();
-}//searchID
-
-function searchItemModified(input) {
-	var val = input.getValue().trim();
-	var dialog = input.getDialog();
-	var elResults = input.elResults;
-
-	// spinner hinzu
-	elResults.addClass("ckaspin");
-
-	// TODO: error handling
-
-	logme("suche...");
-
-	var xhr = new XMLHttpRequest();
-	xhr.onload = function(e) {
-		// load-handler - nach DONE
-		logme(e);
-		logme(e.target.response.results);
-
-		var data = e.target.response;
-		var content = "";
-		if (data.count > 0) {	// count 0, dann keine items mit dem begriff im namen
-			// items gefunden
-			content = "";
-			var result = data.results;
-			// durchloopen der items und klickbare liste aufbauen
-			for (var i in result) {
-				var item = result[i];
-				content += "<div class='result_item rarity_" + item.rarity + "' " +
-					"data-id='" + item.data_id + "' " +
-					"data-name='" + sanatizeString(item.name) + "' " +
-					"data-img='" + item.img + "'>" +
-					"<div class='result_img'>" +
-					"<img src='" + item.img + "' />" +
-					"</div>" +
-					"<div class='result_name'>" + item.name + "</div>" +
-					"</div>";
-			}
-		}
-
-		// resultate (oder error) ausgeben
-		if (content) {
-			elResults.setHtml(content);
-		} else {
-			ckaShowError("Keine Items mit dem Namen '" + val + "' gefunden", input);
-		}
-		elResults.removeClass("ckaspin");	// spinner entfernen
-		dialog.layout();	// zentrierten
-
-	};
-	xhr.ontimeout = function(e) {
-		// XMLHttpRequest timed out
-		ckaShowError(
-			"Netzwerk Timeout - die Such-API ist derzeit nicht erreichbar.<br/>" +
-			"Probiere es etwas später erneut.",
-			input
-		);
-	};
-	xhr.timeout = 20000;	// ms
-	// gw2armory bietet nur eine anzeige an, dank gw2spidy gibts ne elegante suche
-	xhr.open("GET", "http://www.gw2spidy.com/api/v0.9/json/item-search/" + val, true);
-	xhr.responseType = "json";
-	xhr.send();
-}//searchID
-
+}//getDefaultCKArmoryDD
 
 function getCKArmoryTab(idSuffix, tabTitle, inputTitle, elResults, validateFunc, searchFunc) {
 	var tabDef = {
@@ -307,10 +143,187 @@ function getCKArmoryTab(idSuffix, tabTitle, inputTitle, elResults, validateFunc,
 	return tabDef;
 }//getCKArmoryTab
 
+// fuers visuelle, entfernt selection bei gefundenen eintraegen
+function removeSelection() {
+	var resultItems = Array.from(document.querySelectorAll(".result_item"));
+	resultItems.forEach(function(item) {
+		item.classList.remove("active");
+	});
+}//removeSelection
+
+function ckaShowError(msg, input) {
+	var elResults = input.elResults;
+	elResults.setHtml(
+		"<div class='cka_err'>" + msg + "</div>"
+	);
+
+	return false;
+}//ckaShowError
+
+/* ########## /DIALOG-GENERAL ########## */
+
+
+/* ########## DIALOG-LOGIC ########## */
+
+function ckaValidateName(input) {
+	var val = input.getValue().trim();
+	// jedes item hat mindestens 3 zeichen, erst dann suche starten
+	var isValid = val && val.length > 2;
+	if ( !isValid ) {
+		return ckaShowError("Gib mindestens 3 Zeichen ein!", input);
+	}
+
+	return isValid;
+}//ckaValidateName
+
+function ckaValidateID(input) {
+	var val = input.getValue().trim();
+	// ids besitzen mindestens 4 zeichen, nur numerisch
+	var isValid = val && val.length > 3;
+	if ( !isValid ) {
+		return ckaShowError("Gib mindestens 4 Zahlen ein!", input);
+	}
+
+	isValid = isValid && Number(val) === parseInt(val, 10);
+	if ( !isValid ) {
+		return ckaShowError("Ein Chatlink besitzt nur Zahlen (0-9)!", input);
+	}
+
+	return isValid;
+}//ckaValidateID
+
+// eigentliche logik, xhr fuer div. elemente mit ergebnisdarstellung im dialog
+function searchID(input) {
+	var val = input.getValue().trim();
+	var dialog = input.getDialog();
+	var elResults = input.elResults;
+	var intention = dialog.parts.ckarmory.intention;
+
+	// spinner hinzu
+	elResults.addClass("ckaspin");
+
+	// TODO: caching?
+
+	logme("suche...");
+
+	var xhr = new XMLHttpRequest();
+	xhr.onload = function(e) {
+		// load-handler - nach DONE
+		logme(e);
+		logme(e.target.response);
+
+		var data = e.target.response;
+		var content = "";
+		if (!data.text) {
+			// items gefunden
+			var item = data;
+			content = "<div class='result_item" +
+				(item.rarity ? " rarity_" + item.rarity.toLowerCase() : "") + "' " +
+				"data-id='" + item.id + "' " +
+				"data-name='" + sanatizeString(item.name) + "' " +
+				"data-img='" + item.icon + "'>" +
+				"<div class='result_img'>" +
+				"<img src='" + item.icon + "' />" +
+				"</div>" +
+				"<div class='result_name'>" + item.name + "</div>" +
+				"</div>";
+		}
+
+		// resultate (oder error) ausgeben
+		if (content) {
+			elResults.setHtml(content);
+		} else {
+			ckaShowError("Kein Ergebnis mit der ID '" + val + "' gefunden", input);
+		}
+		elResults.removeClass("ckaspin");	// spinner entfernen
+		dialog.layout();	// zentrierten
+
+	};
+	xhr.ontimeout = function(e) {
+		// XMLHttpRequest timed out
+		ckaShowError(
+			"Netzwerk Timeout - die GW2-API ist derzeit nicht erreichbar.<br/>" +
+			"Probiere es etwas später erneut.",
+			input
+		);
+	};
+
+	xhr.timeout = 20000;	// ms
+	// gw2armory bietet nur eine anzeige an, dank gw2spidy gibts ne elegante suche
+	xhr.open("GET", "https://api.guildwars2.com/v2/" + intention + "?lang=de&id=" + val, true);
+	xhr.responseType = "json";
+	xhr.send();
+}//searchID
+
+function searchItemModified(input) {
+	var val = input.getValue().trim();
+	var dialog = input.getDialog();
+	var elResults = input.elResults;
+
+	// spinner hinzu
+	elResults.addClass("ckaspin");
+	logme("suche...");
+
+	var xhr = new XMLHttpRequest();
+	xhr.onload = function(e) {
+		// load-handler - nach DONE
+		logme(e);
+		logme(e.target.response.results);
+
+		var data = e.target.response;
+		var content = "";
+		if (data.count > 0) {	// count 0, dann keine items mit dem begriff im namen
+			// items gefunden
+			content = "";
+			var result = data.results;
+			// durchloopen der items und klickbare liste aufbauen
+			for (var i in result) {
+				var item = result[i];
+				content += "<div class='result_item rarity_" + item.rarity + "' " +
+					"data-id='" + item.data_id + "' " +
+					"data-name='" + sanatizeString(item.name) + "' " +
+					"data-img='" + item.img + "'>" +
+					"<div class='result_img'>" +
+					"<img src='" + item.img + "' />" +
+					"</div>" +
+					"<div class='result_name'>" + item.name + "</div>" +
+					"</div>";
+			}
+		}
+
+		// resultate (oder error) ausgeben
+		if (content) {
+			elResults.setHtml(content);
+		} else {
+			ckaShowError("Keine Items mit dem Namen '" + val + "' gefunden", input);
+		}
+		elResults.removeClass("ckaspin");	// spinner entfernen
+		dialog.layout();	// zentrierten
+
+	};
+	xhr.ontimeout = function(e) {
+		// XMLHttpRequest timed out
+		ckaShowError(
+			"Netzwerk Timeout - die Such-API ist derzeit nicht erreichbar.<br/>" +
+			"Probiere es etwas später erneut.",
+			input
+		);
+	};
+	xhr.timeout = 20000;	// ms
+	// gw2armory bietet nur eine anzeige an, dank gw2spidy gibts ne elegante suche
+	xhr.open("GET", "http://www.gw2spidy.com/api/v0.9/json/item-search/" + val, true);
+	xhr.responseType = "json";
+	xhr.send();
+}//searchID
+
+/* ########## /DIALOG-LOGIC ########## */
 
 
 
 
+/* ########## DIALOG-CKEDITOR ########## */
+
+// ##### ITEMS
 
 CKEDITOR.dialog.add( "ckarmoryItems", function( editor ) {
 	var dialogDef = getDefaultCKArmoryDD(editor, "items");
@@ -343,6 +356,8 @@ CKEDITOR.dialog.add( "ckarmoryItems", function( editor ) {
 	return dialogDef;
 });//ckarmoryItems add
 
+// ##### SKILLS
+
 CKEDITOR.dialog.add( "ckarmorySkills", function( editor ) {
 	var dialogDef = getDefaultCKArmoryDD(editor, "skills");
 	dialogDef.title = "Skillauswahl";
@@ -363,4 +378,17 @@ CKEDITOR.dialog.add( "ckarmorySkills", function( editor ) {
 	return dialogDef;
 });//ckarmoryItems add
 
+// ##### SPECIALIZATION
+
+/*
+TODO:
+# spez. id array abfragen
+# alle ids infos abfragen (session cachen!)
+# auswahl nach profession (dropdown)
+# auswahl nach spec.-name (dd)
+# auswahl von 3 major traits (dd) (optional)
+
+*/
+
+/* ########## /DIALOG-CKEDITOR ########## */
 
